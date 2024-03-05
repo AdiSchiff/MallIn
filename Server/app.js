@@ -28,7 +28,7 @@ app.use('/api/Users',user);
 const login = require('./routes/login')
 app.use('/api/Tokens',login);
 
-const azrieliStore = require('./routes/azrieli_tlv_store')
+const azrieliStore = require('./routes/azrieli_store')
 app.use('/api/AzrieliStore',azrieliStore);
 
 const server = http.createServer(app);
