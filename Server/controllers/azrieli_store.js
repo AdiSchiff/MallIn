@@ -129,7 +129,11 @@ const getStoresByType = async (req, res) => {
             //Add the store object to the mall's stores array
             azrieliStores.push(checkedStore);
         }
-        return res.status(200).json(azrieliStores);
+        const category = {
+            "categoryName": req.params.storeType,
+            "storesList": azrieliStores
+        }
+        return res.status(200).json(category);
     }
     res.status(401).send();
 };
