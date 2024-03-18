@@ -6,7 +6,7 @@ var router = express.Router();
 router.route('/')
     .post(storeController.createNewStore);
 router.route('/:storename')
-    .get(storeController.getStoreByName)
+    .get(storeController.getStoresByName)
     .delete(storeController.deleteStoreByName);
 router.route('/:floor')
     .get(storeController.getStoresByFloor)

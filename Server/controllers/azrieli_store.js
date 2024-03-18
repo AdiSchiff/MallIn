@@ -32,7 +32,7 @@ const createNewStore = async (req, res) => {
     })
 };
 
-const getStoreByName = async (req, res) => {
+const getStoresByName = async (req, res) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
         if (!await loginController.isLoggedIn(token)) {
@@ -134,4 +134,4 @@ const getStoresByType = async (req, res) => {
     res.status(401).send();
 };
 
-module.exports = { createNewStore, getStoreByName, getStoresByFloor, deleteStoreByName, updateFloor, getStoresByType }
+module.exports = { createNewStore, getStoresByName, getStoresByFloor, deleteStoreByName, updateFloor, getStoresByType }
