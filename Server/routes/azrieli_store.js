@@ -5,13 +5,13 @@ var router = express.Router();
 
 router.route('/')
     .post(storeController.createNewStore);
-router.route('/:storeType')
+router.route('/type/:storeType')
     .get(storeController.getStoresByType);
     //find solution to the string problame
-router.route('/:storename')
+router.route('/name/:storename')
     .get(storeController.getStoresByName)
     .delete(storeController.deleteStoreByName);
-router.route('/:floor')
+router.route('/floor/:floor')
     .get(storeController.getStoresByFloor)
     .put(storeController.updateFloor);
 
