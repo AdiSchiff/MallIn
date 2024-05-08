@@ -33,40 +33,35 @@ const createNewStore = async (req, res) => {
 };
 
 const getStoresByName = async (req, res) => {
-    try {
-        const token = req.headers.authorization.split(' ')[1];
-        if (!await loginController.isLoggedIn(token)) {
-            return res.status(401).send();
-        }
-        //Check if the store exists in the mall's collection
-        const azrieliStores = await AztieliStoreService.getStoresByName(storeName, mallname);
-        if (!azrieliStores) {
+    const token = req.headers.authorization.split(' ')[1];
+    if (!await loginController.isLoggedIn(token)) {
+        return res.status(401).send();
+    }
+    //Check if the store exists in the mall's collection
+    const azrieliStores = await AztieliStoreService.getStoresByName(storeName, mallname);
+    if (!azrieliStores) {
+        return res.status(404).send(null);
+    }
+    const stores = [];
+    let i = 0
+    for(; i < stores.length; i++){
+        //Check if the current store exists in the stores collection
+        const store = await storeService.getStoreByName(azrieliStores[i].storename);
+        if (!store) {
             return res.status(404).send(null);
         }
-        const stores = [];
-        let i = 0
-        for(; i < stores.length; i++){
-            //Check if the current store exists in the stores collection
-            const store = await storeService.getStoreByName(azrieliStores[i].storename);
-            if (!store) {
-                return res.status(404).send(null);
-            }
-            //Create a store object
-            const checkedStore = {
-                "storename": azrieliStores[i].storename,
-                "workingHours": azrieliStores.workingHours,
-                "floor": azrieliStores.floor,
-                "logoPic": store[i].logoPic,
-                "storeType": store[i].storeType
-            }
-            //Add the store object to the mall's stores array
-            stores.push(checkedStore);
+        //Create a store object
+        const checkedStore = {
+            "storename": azrieliStores[i].storename,
+            "workingHours": azrieliStores.workingHours,
+            "floor": azrieliStores.floor,
+            "logoPic": store[i].logoPic,
+            "storeType": store[i].storeType
         }
-        return res.status(200).json(stores);
-    } 
-    catch (error) {
-        alert(error)
+        //Add the store object to the mall's stores array
+        stores.push(checkedStore);
     }
+    return res.status(200).json(stores);
 };
 
 const getStoresByFloor = async (req, res) => {
@@ -103,39 +98,44 @@ const updateFloor = async (req, res) => {
 };
 
 const getStoresByType = async (req, res) => {
-    const token = req.headers.authorization.split(' ')[1];
-    if(loginController.isLoggedIn(token) !== -1){
-        //Get an array of all the stores from the given storeType
-        const stores = await storeService.getStoresByType(req.params.storeType);
-        if(!stores){
-            return res.status(404).send();
+    const token = req.headers.authorization.split(" ")[1];
+    if (loginController.isLoggedIn(token) !== -1) {
+      //Get an array of all the stores from the given storeType
+      console.log(req.params.storeType);
+      const stores = await storeService.getStoresByType(req.params.storeType);
+      if (!stores) {
+        return res.status(404).send();
+      }
+      const azrieliStores = [];
+      let i = 0;
+      console.log(stores.length);
+      for (; i < stores.length; i++) {
+        //Check if the current store exsists in the mall
+        const store = await AztieliStoreService.getStoresByName(
+          stores[i].storename,
+          req.params.mallname
+        );
+        if (!store) {
+          continue;
         }
-        const azrieliStores = [];
-        let i = 0
-        for(; i < stores.length; i++){
-            //Check if the current store exsists in the mall
-            const store = await AztieliStoreService.getStoreByName(stores[i].storename, req.params.mallname);
-            if (!store) {
-                continue;
-            }
-            //Create a store object
-            const checkedStore = {
-                "storename": stores[i].storename,
-                "workingHours": store.workingHours,
-                "floor": store.floor,
-                "logoPic": stores[i].logoPic,
-                "storeType": stores[i].storeType
-            }
-            //Add the store object to the mall's stores array
-            azrieliStores.push(checkedStore);
-        }
-        const category = {
-            "categoryName": req.params.storeType,
-            "storesList": azrieliStores
-        }
-        return res.status(200).json(category);
+        //Create a store object
+        const checkedStore = {
+          storename: stores[i].storename,
+          workingHours: store.workingHours,
+          floor: store.floor,
+          logoPic: stores[i].logoPic,
+          storeType: stores[i].storeType,
+        };
+        //Add the store object to the mall's stores array
+        azrieliStores.push(checkedStore);
+      }
+      const category = {
+        categoryName: req.params.storeType,
+        storesList: azrieliStores,
+      };
+      return res.status(200).json(category);
     }
     res.status(401).send();
-};
+  };
 
 module.exports = { createNewStore, getStoresByName, getStoresByFloor, deleteStoreByName, updateFloor, getStoresByType }
