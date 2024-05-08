@@ -121,8 +121,8 @@ const getStoresByType = async (req, res) => {
         //Create a store object
         const checkedStore = {
           storename: stores[i].storename,
-          workingHours: store.workingHours,
-          floor: store.floor,
+          workingHours: store[0].workingHours,
+          floor: store[0].floor,
           logoPic: stores[i].logoPic,
           storeType: stores[i].storeType,
         };
