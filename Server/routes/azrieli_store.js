@@ -7,7 +7,6 @@ router.route('/')
     .post(storeController.createNewStore);
 router.route('/type/:storeType')
     .get(storeController.getStoresByType);
-    //find solution to the string problame
 router.route('/name/:storename')
     .get(storeController.getStoresByName)
     .delete(storeController.deleteStoreByName);

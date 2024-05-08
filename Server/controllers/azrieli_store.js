@@ -101,14 +101,12 @@ const getStoresByType = async (req, res) => {
     const token = req.headers.authorization.split(" ")[1];
     if (loginController.isLoggedIn(token) !== -1) {
       //Get an array of all the stores from the given storeType
-      console.log(req.params.storeType);
       const stores = await storeService.getStoresByType(req.params.storeType);
       if (!stores) {
         return res.status(404).send();
       }
       const azrieliStores = [];
       let i = 0;
-      console.log(stores.length);
       for (; i < stores.length; i++) {
         //Check if the current store exsists in the mall
         const store = await AztieliStoreService.getStoresByName(
