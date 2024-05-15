@@ -14,6 +14,10 @@ const getStoresByFloor = async (floor, mallname) => {
   return await AzrieliStore.find({ floor: floor, mallname: mallname });
 };
 
+const getStoresByMallName = async (mallname) => {
+    return await AzrieliStore.find({ mallname: mallname });
+  };
+
 const getStoresByName = async (partialName, mallname) => {
   const regex = new RegExp(partialName, "i"); // 'i' flag for case-insensitive search
   return await AzrieliStore.find({
@@ -40,6 +44,7 @@ const updateFloor = async (storename, mallname, newFloor) => {
 module.exports = {
   createStore,
   getStoresByFloor,
+  getStoresByMallName,
   getStoresByName,
   deleteStoreByName,
   updateFloor,

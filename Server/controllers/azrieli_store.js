@@ -161,6 +161,35 @@ const getStoresByType = async (req, res) => {
   res.status(401).send();
 };
 
+const getTypes = async (req, res) => {
+    const token = req.headers.authorization.split(" ")[1];
+    if (loginController.isLoggedIn(token) !== -1) {
+      //Get an array of all the stores from the given mallname
+      const azrieliStores = await AztieliStoreService.getStoresByMallName(req.params.mallname);
+      if (!stores) {
+        return res.status(404).send();
+      }
+
+      // Initialize an empty object to store unique categories
+      const uniqueCategories = {};
+
+      // Iterate through the stores
+      stores.forEach(store => {
+          const category = store.category;
+          // If the category is not already in the object, add it
+          if (!uniqueCategories[category]) {
+              uniqueCategories[category] = true;
+          }
+      });
+
+      // Extract the unique categories into an array
+      const uniqueCategoriesArray = Object.keys(uniqueCategories);
+
+      return res.status(200).json(uniqueCategoriesArray);
+    }
+    res.status(401).send();
+  };
+
 module.exports = {
   createNewStore,
   getStoresByName,
