@@ -16,7 +16,7 @@ const getStoresByFloor = async (floor, mallname) => {
 
 const getStoresByMallName = async (mallname) => {
     return await AzrieliStore.find({ mallname: mallname });
-  };
+};
 
 const getStoresByName = async (partialName, mallname) => {
   const regex = new RegExp(partialName, "i"); // 'i' flag for case-insensitive search

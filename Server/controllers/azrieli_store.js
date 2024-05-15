@@ -197,4 +197,5 @@ module.exports = {
   deleteStoreByName,
   updateFloor,
   getStoresByType,
+  getTypes
 };

@@ -13,5 +13,8 @@ router.route('/name/:storename')
 router.route('/floor/:floor')
     .get(storeController.getStoresByFloor)
     .put(storeController.updateFloor);
+router.route('/mallname/:mallname')
+    .get(storeController.getTypes)
+
 
 module.exports = router;
