@@ -9,6 +9,10 @@ const createStore = async (storename, storeType, logoPic) => {
     return await store.save();
 };
 
+const getAll = async () => {
+    return await Store.find();
+}
+
 const getStoresByType = async (storeType) => {
     return await Store.find({storeType: storeType});
 };
@@ -17,4 +21,4 @@ const getStoreByName = async (storename) => {
     return await Store.findOne({storename: storename});
 };
 
-module.exports = { createStore, getStoresByType, getStoreByName }
+module.exports = { createStore, getAll, getStoresByType, getStoreByName }
