@@ -25,7 +25,6 @@ const getStoresByName = async (partialName, mallname) => {
       storename: { $regex: regex },
       mallname: mallname,
     });
-    console.log("Stores found:", stores);
     return stores;
   } catch (error) {
     console.error("Error querying stores by name:", error);

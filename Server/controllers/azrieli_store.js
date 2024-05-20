@@ -52,7 +52,6 @@ const getStoresByName = async (req, res) => {
 
     const storename = req.params.storename;
     const mallname = req.query.mallname;
-    console.log("Fetching stores with name:", storename, "in mall:", mallname);
 
     // Check if the store exists in the mall's collection
     const azrieliStores = await AztieliStoreService.getStoresByName(
@@ -68,10 +67,6 @@ const getStoresByName = async (req, res) => {
       // Check if the current store exists in the stores collection
       const store = await storeService.getStoreByName(azrieliStore.storename);
       if (!store) {
-        console.log(
-          "Store not found in main collection:",
-          azrieliStore.storename
-        );
         continue; // Skip this store if not found
       }
 
