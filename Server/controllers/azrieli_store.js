@@ -138,15 +138,15 @@ const getStoresByType = async (req, res) => {
     if (loginController.isLoggedIn(token) !== -1) {
       const storeType = req.params.storeType;
       const mallName = req.query.mallname; // Use req.query.mallname for the query parameter
-      if (storeType === 'ALL') {
-        const stores = await storeService.getAll();
-      }
-      else {
+      let stores;
+      if (storeType === "ALL") {
+        stores = await storeService.getAll();
+      } else {
         // Get an array of all the stores from the given storeType
-        const stores = await storeService.getStoresByType(storeType);
+        stores = await storeService.getStoresByType(storeType);
       }
       if (!stores || stores.length === 0) {
-          return res
+        return res
           .status(404)
           .send("No stores found for the given store type.");
       }
@@ -186,39 +186,38 @@ const getStoresByType = async (req, res) => {
 };
 
 const getTypes = async (req, res) => {
-    const token = req.headers.authorization.split(" ")[1];
-    if (loginController.isLoggedIn(token) !== -1) {
-      //Get an array of all the stores from the given mallname
-      const azrieliStores = await AztieliStoreService.getStoresByMallName(
-        req.params.mallname
-      );
-      if (!azrieliStores) {
-        return res.status(404).send();
-      }
-  
-      // Initialize an object to store unique categories
-      const uniqueCategories = {};
-  
-      // Iterate through the stores
-      for (let i = 0; i < azrieliStores.length; i++) {
-        const store = await storeService.getStoreByName(
-          azrieliStores[i].storename
-        );
-        const category = store.storeType.toUpperCase(); // Convert category to uppercase
-        // If the category is not already in the object, add it
-        if (!uniqueCategories[category]) {
-          uniqueCategories[category] = true;
-        }
-      }
-  
-      // Add "ALL" category as the first element of the array
-      const uniqueCategoriesArray = ["ALL", ...Object.keys(uniqueCategories)];
-  
-      return res.status(200).json(uniqueCategoriesArray);
+  const token = req.headers.authorization.split(" ")[1];
+  if (loginController.isLoggedIn(token) !== -1) {
+    //Get an array of all the stores from the given mallname
+    const azrieliStores = await AztieliStoreService.getStoresByMallName(
+      req.params.mallname
+    );
+    if (!azrieliStores) {
+      return res.status(404).send();
     }
-    res.status(401).send();
-  };
-  
+
+    // Initialize an object to store unique categories
+    const uniqueCategories = {};
+
+    // Iterate through the stores
+    for (let i = 0; i < azrieliStores.length; i++) {
+      const store = await storeService.getStoreByName(
+        azrieliStores[i].storename
+      );
+      const category = store.storeType.toUpperCase(); // Convert category to uppercase
+      // If the category is not already in the object, add it
+      if (!uniqueCategories[category]) {
+        uniqueCategories[category] = true;
+      }
+    }
+
+    // Add "ALL" category as the first element of the array
+    const uniqueCategoriesArray = ["ALL", ...Object.keys(uniqueCategories)];
+
+    return res.status(200).json(uniqueCategoriesArray);
+  }
+  res.status(401).send();
+};
 
 module.exports = {
   createNewStore,
