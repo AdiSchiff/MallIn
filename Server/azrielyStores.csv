@@ -1,4 +1,4 @@
-﻿storename,workingHours,floor,mall
+﻿storename,workingHours,floor,mallname
 GOLDA,Sun-Thur: 8:00-23:00 Fri/Holyday: 9:30-15:00  Sut: 1 hour after Shabat till 23:00,0,Azrieli TLV
 OOMAI,Sun-Thur: 10:00-21:00,0,Azrieli TLV
 MISTER QUICK,Sun-Thur: 8:30-20:00,0,Azrieli TLV
@@ -9,7 +9,7 @@ PERAH NOHUT,Sun-Thu: 9:30-22:00 Fri/Holydays: 9:30-15:30 Sat: 1 hour after Shaba
 URBANICA,Sun-Thu: 9:30-22:00 Fri/Holydays: 9:30-15:30 Sat: 1 hour after Shabat till 23:09,0,Azrieli TLV
 SHIR NAKASH,Sun-Thu: 9:30-22:00 Fri/Holydays: 9:30-15:30 Sat: 1 hour after Shabat till 23:09,0,Azrieli TLV
 MINIMAX,Sun-Thu: 9:30-22:00 Fri/Holydays: 9:30-15:30 Sat: 1 hour after Shabat till 23:09,0,Azrieli TLV
-BRADLY,Sun-Thur: 6:15-20:00 Fri: 7:00-14:00,0,Azrieli TLV
+BREADLY,Sun-Thur: 6:15-20:00 Fri: 7:00-14:00,0,Azrieli TLV
 SHUPERSAL,Sun-Thu: 9:30-22:00 Fri/Holydays: 9:30-15:30 Sat: 1 hour after Shabat till 23:09,0,Azrieli TLV
 ZARA,Sun-Thu: 9:30-22:00 Fri/Holydays: 9:30-15:30 Sat: 1 hour after Shabat till 23:09,2,Azrieli TLV
 BILLABONG,Sun-Thu: 9:30-22:00 Fri/Holydays: 9:30-15:30 Sat: 1 hour after Shabat till 23:09,1,Azrieli TLV
