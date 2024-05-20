@@ -15,15 +15,22 @@ const getStoresByFloor = async (floor, mallname) => {
 };
 
 const getStoresByMallName = async (mallname) => {
-    return await AzrieliStore.find({ mallname: mallname });
+  return await AzrieliStore.find({ mallname: mallname });
 };
 
 const getStoresByName = async (partialName, mallname) => {
-  const regex = new RegExp(partialName, "i"); // 'i' flag for case-insensitive search
-  return await AzrieliStore.find({
-    storename: { $regex: regex },
-    mallname: mallname,
-  });
+  try {
+    const regex = new RegExp(partialName, "i"); // 'i' flag for case-insensitive search
+    const stores = await AzrieliStore.find({
+      storename: { $regex: regex },
+      mallname: mallname,
+    });
+    console.log("Stores found:", stores);
+    return stores;
+  } catch (error) {
+    console.error("Error querying stores by name:", error);
+    throw error;
+  }
 };
 
 const deleteStoreByName = async (storename, mallname) => {

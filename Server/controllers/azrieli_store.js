@@ -44,39 +44,54 @@ const createNewStore = async (req, res) => {
 };
 
 const getStoresByName = async (req, res) => {
-  const token = req.headers.authorization.split(" ")[1];
-  if (!(await loginController.isLoggedIn(token))) {
-    return res.status(401).send();
-  }
-  //Check if the store exists in the mall's collection
-  const azrieliStores = await AztieliStoreService.getStoresByName(
-    req.params.storename,
-    req.params.mallname
-  );
-  if (!azrieliStores) {
-    return res.status(404).send(null);
-  }
-  const stores = [];
-  let i = 0;
-  for (; i < azrieliStores.length; i++) {
-    //Check if the current store exists in the stores collection
-    const store = await storeService.getStoreByName(azrieliStores[i].storename);
-    if (!store) {
-      return res.status(404).send(null);
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    if (!(await loginController.isLoggedIn(token))) {
+      return res.status(401).send("Unauthorized");
     }
 
-    //Create a store object
-    const checkedStore = {
-      storename: store.storename,
-      workingHours: azrieliStores[i].workingHours,
-      floor: azrieliStores[i].floor,
-      logoPic: store.logoPic,
-      storeType: store.storeType,
-    };
-    //Add the store object to the mall's stores array
-    stores.push(checkedStore);
+    const storename = req.params.storename;
+    const mallname = req.query.mallname;
+    console.log("Fetching stores with name:", storename, "in mall:", mallname);
+
+    // Check if the store exists in the mall's collection
+    const azrieliStores = await AztieliStoreService.getStoresByName(
+      storename,
+      mallname
+    );
+    if (!azrieliStores || azrieliStores.length === 0) {
+      return res.status(404).send("No stores found in the specified mall");
+    }
+
+    const stores = [];
+    for (const azrieliStore of azrieliStores) {
+      // Check if the current store exists in the stores collection
+      const store = await storeService.getStoreByName(azrieliStore.storename);
+      if (!store) {
+        console.log(
+          "Store not found in main collection:",
+          azrieliStore.storename
+        );
+        continue; // Skip this store if not found
+      }
+
+      // Create a store object
+      const checkedStore = {
+        storename: store.storename,
+        workingHours: azrieliStore.workingHours,
+        floor: azrieliStore.floor,
+        logoPic: store.logoPic,
+        storeType: store.storeType,
+      };
+      // Add the store object to the mall's stores array
+      stores.push(checkedStore);
+    }
+
+    return res.status(200).json(stores);
+  } catch (error) {
+    console.error("Error in getStoresByName function:", error);
+    res.status(500).send("Internal Server Error");
   }
-  return res.status(200).json(stores);
 };
 
 const getStoresByFloor = async (req, res) => {
@@ -123,74 +138,87 @@ const updateFloor = async (req, res) => {
 };
 
 const getStoresByType = async (req, res) => {
-  const token = req.headers.authorization.split(" ")[1];
-  if (loginController.isLoggedIn(token) !== -1) {
-    //Get an array of all the stores from the given storeType
-    const stores = await storeService.getStoresByType(req.params.storeType);
-    if (!stores) {
-      return res.status(404).send();
-    }
-    const azrieliStores = [];
-    let i = 0;
-    for (; i < stores.length; i++) {
-      //Check if the current store exsists in the mall
-      const store = await AztieliStoreService.getStoresByName(
-        stores[i].storename,
-        req.params.mallname
-      );
-      if (!store) {
-        continue;
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    if (loginController.isLoggedIn(token) !== -1) {
+      const storeType = req.params.storeType;
+      const mallName = req.query.mallname; // Use req.query.mallname for the query parameter
+      // Get an array of all the stores from the given storeType
+      const stores = await storeService.getStoresByType(storeType);
+      if (!stores || stores.length === 0) {
+        return res
+          .status(404)
+          .send("No stores found for the given store type.");
       }
-      //Create a store object
-      const checkedStore = {
-        storename: stores[i].storename,
-        workingHours: store[0].workingHours,
-        floor: store[0].floor,
-        logoPic: stores[i].logoPic,
-        storeType: stores[i].storeType,
+      const azrieliStores = [];
+      for (const store of stores) {
+        // Check if the current store exists in the mall
+        const mallStores = await AztieliStoreService.getStoresByName(
+          store.storename,
+          mallName
+        );
+        if (!mallStores || mallStores.length === 0) {
+          continue;
+        }
+
+        // Create a store object
+        const checkedStore = {
+          storename: store.storename,
+          workingHours: mallStores[0].workingHours,
+          floor: mallStores[0].floor,
+          logoPic: store.logoPic,
+          storeType: store.storeType,
+        };
+        // Add the store object to the mall's stores array
+        azrieliStores.push(checkedStore);
+      }
+      const category = {
+        categoryName: storeType,
+        storesList: azrieliStores,
       };
-      //Add the store object to the mall's stores array
-      azrieliStores.push(checkedStore);
+      return res.status(200).json(category);
     }
-    const category = {
-      categoryName: req.params.storeType,
-      storesList: azrieliStores,
-    };
-    return res.status(200).json(category);
+    res.status(401).send("Unauthorized");
+  } catch (error) {
+    console.error("Error in getStoresByType function: ", error);
+    res.status(500).send("Internal Server Error");
   }
-  res.status(401).send();
 };
 
 const getTypes = async (req, res) => {
-    const token = req.headers.authorization.split(" ")[1];
-    if (loginController.isLoggedIn(token) !== -1) {
-      //Get an array of all the stores from the given mallname
-      const azrieliStores = await AztieliStoreService.getStoresByMallName(req.params.mallname);
-      if (!azrieliStores) {
-        return res.status(404).send();
-      }
-
-      // Initialize an empty object to store unique categories
-      const uniqueCategories = {};
-
-      // Iterate through the stores
-      let i = 0;
-      for (; i < azrieliStores.length; i++) {
-          const store = await storeService.getStoreByName(azrieliStores[i].storename);
-          const category = store.storeType;
-          // If the category is not already in the object, add it
-          if (!uniqueCategories[category]) {
-              uniqueCategories[category] = true;
-          }
-      };
-
-      // Extract the unique categories into an array
-      const uniqueCategoriesArray = Object.keys(uniqueCategories);
-
-      return res.status(200).json(uniqueCategoriesArray);
+  const token = req.headers.authorization.split(" ")[1];
+  if (loginController.isLoggedIn(token) !== -1) {
+    //Get an array of all the stores from the given mallname
+    const azrieliStores = await AztieliStoreService.getStoresByMallName(
+      req.params.mallname
+    );
+    if (!azrieliStores) {
+      return res.status(404).send();
     }
-    res.status(401).send();
-  };
+
+    // Initialize an empty object to store unique categories
+    const uniqueCategories = {};
+
+    // Iterate through the stores
+    let i = 0;
+    for (; i < azrieliStores.length; i++) {
+      const store = await storeService.getStoreByName(
+        azrieliStores[i].storename
+      );
+      const category = store.storeType;
+      // If the category is not already in the object, add it
+      if (!uniqueCategories[category]) {
+        uniqueCategories[category] = true;
+      }
+    }
+
+    // Extract the unique categories into an array
+    const uniqueCategoriesArray = Object.keys(uniqueCategories);
+
+    return res.status(200).json(uniqueCategoriesArray);
+  }
+  res.status(401).send();
+};
 
 module.exports = {
   createNewStore,
@@ -199,5 +227,5 @@ module.exports = {
   deleteStoreByName,
   updateFloor,
   getStoresByType,
-  getTypes
+  getTypes,
 };
