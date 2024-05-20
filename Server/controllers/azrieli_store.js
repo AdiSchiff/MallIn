@@ -166,7 +166,7 @@ const getTypes = async (req, res) => {
     if (loginController.isLoggedIn(token) !== -1) {
       //Get an array of all the stores from the given mallname
       const azrieliStores = await AztieliStoreService.getStoresByMallName(req.params.mallname);
-      if (!stores) {
+      if (!azrieliStores) {
         return res.status(404).send();
       }
 
