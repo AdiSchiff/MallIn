@@ -174,13 +174,14 @@ const getTypes = async (req, res) => {
       const uniqueCategories = {};
 
       // Iterate through the stores
-      stores.forEach(store => {
-          const category = store.category;
+      let i = 0;
+      for (; i < stores.length; i++) {
+          const category = await storeService.getStoreByName(store.storename);
           // If the category is not already in the object, add it
           if (!uniqueCategories[category]) {
               uniqueCategories[category] = true;
           }
-      });
+      };
 
       // Extract the unique categories into an array
       const uniqueCategoriesArray = Object.keys(uniqueCategories);
