@@ -175,7 +175,7 @@ const getTypes = async (req, res) => {
 
       // Iterate through the stores
       let i = 0;
-      for (; i < stores.length; i++) {
+      for (; i < azrieliStores.length; i++) {
           const category = await storeService.getStoreByName(store.storename);
           // If the category is not already in the object, add it
           if (!uniqueCategories[category]) {
