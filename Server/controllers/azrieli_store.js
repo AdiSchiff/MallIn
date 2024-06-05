@@ -139,7 +139,7 @@ const getStoresByType = async (req, res) => {
       const storeType = req.params.storeType;
       const mallName = req.query.mallname; // Use req.query.mallname for the query parameter
       let stores;
-      if (storeType === "ALL") {
+      if (storeType === "all") {
         stores = await storeService.getAll();
       } else {
         // Get an array of all the stores from the given storeType
@@ -204,7 +204,7 @@ const getTypes = async (req, res) => {
       const store = await storeService.getStoreByName(
         azrieliStores[i].storename
       );
-      const category = store.storeType.toUpperCase(); // Convert category to uppercase
+      const category = store.storeType; // Convert category to uppercase
       // If the category is not already in the object, add it
       if (!uniqueCategories[category]) {
         uniqueCategories[category] = true;
@@ -212,7 +212,7 @@ const getTypes = async (req, res) => {
     }
 
     // Add "ALL" category as the first element of the array
-    const uniqueCategoriesArray = ["ALL", ...Object.keys(uniqueCategories)];
+    const uniqueCategoriesArray = ["all", ...Object.keys(uniqueCategories)];
 
     return res.status(200).json(uniqueCategoriesArray);
   }
