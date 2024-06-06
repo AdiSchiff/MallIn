@@ -10,7 +10,27 @@ const createNewUser = async (username, password, displayName) => {
 };
 
 const getUser = async (username) => {
-    return User.user.findOne({username: username});
+    return User.findOne({username: username});
 };
 
-module.exports = {createNewUser, getUser};
+const getFavorites = async (username) => {
+    return User.findOne({username: username}, 'favorites');
+};
+
+const addToFavorites = async (username, newStore) => {
+    return await User.findOneAndUpdate(
+        { username: username },
+        { $push: { favorites: newStore } },
+        { new: true, useFindAndModify: false }
+    );
+  };
+
+  const removeFromFavorites = async (username, storename) => {
+    return await User.findOneAndUpdate(
+        { username: username },
+        { $pull: { favorites: { storename: storename } } },
+        { new: true, useFindAndModify: false }
+    );
+};
+
+module.exports = {createNewUser, getUser, addToFavorites, removeFromFavorites, getFavorites};

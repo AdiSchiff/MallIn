@@ -41,7 +41,7 @@ const deleteStoreByName = async (storename, mallname) => {
 
 const updateFloor = async (storename, mallname, newFloor) => {
   return await AzrieliStore.findOneAndUpdate(
-    { storeName: storename, mallName: mallname },
+    { storename: storename, mallname: mallname },
     { floor: newFloor },
     { new: true }
   );

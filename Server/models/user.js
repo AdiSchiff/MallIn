@@ -1,6 +1,27 @@
 const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
+const Store = new Schema({
+    storename: {
+        type: String,
+    },
+    storeType: {
+        type: String
+    },
+    logoPic: {
+        type: String,
+    },
+    workingHours: {
+        type: String,
+    },
+    floor: {
+        type: Number,
+    },
+    mallname: {
+        type: String
+    }
+});
+
 const User = new Schema({
     username: {
         type: String,
@@ -11,16 +32,12 @@ const User = new Schema({
     displayName: {
         type: String,
     },
+    favorites: {
+        type: [Store],
+        default: []
+    }
    
 });
 
-const userInfo = {
-    username: {
-        type: String,
-    },
-    displayName: {
-        type: String,
-    }
-}
+
 const user = mongoose.model('User',User);
-module.exports = {user, userInfo};

@@ -28,12 +28,48 @@ const getUser = async (req, res) => {
             return res.status(404).send(null);
         }
         return res.status(200).json({
-            username: user.username,
-            displayName: user.displayName
+            username: username,
+            displayName: displayName
         });
     } catch (error) {
         alert(error)
     }
 };
 
-module.exports = {createNewUser, getUser}
+const addToFavorites = async (req, res) => {
+    const token = req.headers.authorization.split(" ")[1];
+    if (loginController.isLoggedIn(token) !== -1) {
+        const fav = await userService.addToFavorites( req.params.username, req.params.store );
+        if (!fav) {
+            return res.status(404).send();
+        }
+        return res.status(200).json(fav);
+    }
+    res.status(401).send();
+};
+
+const getFavorites = async (req, res) => {
+    const token = req.headers.authorization.split(" ")[1];
+    if (loginController.isLoggedIn(token) !== -1) {
+        const fav = await userService.getFavorites( req.params.username );
+        if (!fav) {
+            return res.status(404).send();
+        }
+        return res.status(200).json(fav);
+    }
+    res.status(401).send();
+};
+
+const removeFromFavorites = async (req, res) => {
+    const token = req.headers.authorization.split(" ")[1];
+    if (loginController.isLoggedIn(token) !== -1) {
+        const fav = await userService.removeFromFavorites( req.params.username, req.params.store.storename );
+        if (!fav) {
+            return res.status(404).send();
+        }
+        return res.status(200).json(fav);
+    }
+    res.status(401).send();
+};
+
+module.exports = {createNewUser, getUser, addToFavorites, removeFromFavorites, getFavorites}
