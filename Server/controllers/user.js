@@ -39,7 +39,8 @@ const getUser = async (req, res) => {
 const addToFavorites = async (req, res) => {
     const token = req.headers.authorization.split(" ")[1];
     if (loginController.isLoggedIn(token) !== -1) {
-        const fav = await userService.addToFavorites( req.params.username, req.params.store );
+        const decoded = jwt.verify(modifiedToken, key);
+        const fav = await userService.addToFavorites( decoded.username, req.params.store );
         if (!fav) {
             return res.status(404).send();
         }
@@ -51,7 +52,8 @@ const addToFavorites = async (req, res) => {
 const getFavorites = async (req, res) => {
     const token = req.headers.authorization.split(" ")[1];
     if (loginController.isLoggedIn(token) !== -1) {
-        const fav = await userService.getFavorites( req.params.username );
+        const decoded = jwt.verify(modifiedToken, key);
+        const fav = await userService.getFavorites( decoded.username );
         if (!fav) {
             return res.status(404).send();
         }
@@ -63,7 +65,8 @@ const getFavorites = async (req, res) => {
 const removeFromFavorites = async (req, res) => {
     const token = req.headers.authorization.split(" ")[1];
     if (loginController.isLoggedIn(token) !== -1) {
-        const fav = await userService.removeFromFavorites( req.params.username, req.params.store.storename );
+        const decoded = jwt.verify(modifiedToken, key);
+        const fav = await userService.removeFromFavorites( decoded.username, req.params.store.storename );
         if (!fav) {
             return res.status(404).send();
         }
