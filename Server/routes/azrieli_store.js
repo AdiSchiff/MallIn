@@ -5,6 +5,8 @@ var router = express.Router();
 
 router.route('/')
     .post(storeController.createNewStore);
+router.route("/type/:storeType/paged")
+    .get(storeController.getStoresByTypePaged);
 router.route('/type/:storeType')
     .get(storeController.getStoresByType);
 router.route('/name/:storename')

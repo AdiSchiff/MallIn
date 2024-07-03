@@ -6,13 +6,16 @@ const Node = new Schema({
         type: String,
     },
     x: {
-        type: float
+        type: Number
     },
     y: {
-        type: float,
+        type: Number,
     },
     edges: {
         type: [String],
+    },
+    floor: {
+        type: Number,
     }
 });
 
