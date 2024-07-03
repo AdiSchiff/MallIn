@@ -45,6 +45,7 @@ const getOrderedRout = async (req, res) => {
           return res.status(401).send();
         }
         //find the stores ids
+        const startNode = await navigationService.getNodesFromStores([req.params.store]);
         const nodes = await navigationService.getNodesFromStores(req.params.stores);
         if (!nodes) {
             return res.status(404).send(null);
@@ -53,21 +54,26 @@ const getOrderedRout = async (req, res) => {
         //find the path between every two nodes and add it to the full path
         let fullPath = [];
         for (let i = 0; i < nodes.length - 1; i++) {
-          const start = nodes[i];
-          const goal = nodes[i + 1];
-          const subPath = navigationService.aStar(start, goal);
-          
-          if (subPath === null) {
-            return res.status(404).send(null);
-          }
-      
-          // If it's the first segment, include all nodes
-          // Otherwise, exclude the first node of each segment to avoid duplication
-          if (i === 0) {
-            fullPath = fullPath.concat(subPath);
-          } else {
-            fullPath = fullPath.concat(subPath.slice(1));
-          }
+            if(i == 0){
+                const start = startNode;
+                const goal = nodes[i];
+            } else {
+                const start = nodes[i];
+                const goal = nodes[i + 1];
+            }
+            const subPath = navigationService.aStar(start, goal);
+            
+            if (subPath === null) {
+                return res.status(404).send(null);
+            }
+        
+            // If it's the first segment, include all nodes
+            // Otherwise, exclude the first node of each segment to avoid duplication
+            if (i === 0) {
+                fullPath = fullPath.concat(subPath);
+            } else {
+                fullPath = fullPath.concat(subPath.slice(1));
+            }
         }
         return res.status(200).json(fullPath);
     } catch (error) {

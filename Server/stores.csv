@@ -29,7 +29,7 @@ ORIGINAL'S,shoes,pictures/originals.jpg
 ALDO,shoes,pictures/aldo.jpg
 TEVA NAOT,shoes,pictures/tevanaot.jpg
 NINE WEST,shoes,pictures/ninewest.jpg
-VANS,shoes,pictures/vans.jpg
+VANS,fashion,pictures/vans.jpg
 HOFF,shoes,pictures/hoff.jpg
 ERROCA,glasses,pictures/erroca.jpg
 AMERICAN EAGLE,fashion,pictures/americaneagle.jpg
@@ -52,7 +52,7 @@ MANGO,fashion,pictures/mango.jpg
 SABON,cosmetics,pictures/sabon.jpg
 FOX,fashion,pictures/fox.jpg
 TZOMET SFARIM,books & toys,pictures/tzometsfarim.jpg
-CASTRO,fashion,pictures/castro.jpg
+CASTRO MEN,fashion,pictures/castro.jpg
 CAROLINA LEMKE,glasses,pictures/carolinalemke.jpg
 CRAZY LINE,fashion,pictures/crazyline.jpg
 TWENTY FOUR SEVEN,fashion,pictures/twentyfourseven.jpg
@@ -108,7 +108,6 @@ FIX,lingerie,pictures/fix.jpg
 PORTO,food,pictures/porto.jpg
 H&M HOME,home & office,pictures/h&mhome.jpg
 BERSHKA,fashion,pictures/bershka.jpg
-ADMINISTRATION,workshop,
 MANIA,fashion,pictures/mania.jpg
 LASTER,accessories & jewelries,pictures/laster.jpg
 GO NOODLES,food,pictures/gonoodles.jpg
@@ -137,7 +136,7 @@ MR GREEN,food,pictures/mrgreen.jpg
 OPATRA LONDON,cosmetics,pictures/opatralondon.jpg
 VINTAGE ORIGINAL,glasses,pictures/vintageoriginal.jpg
 OFFLINE BY AERIE,lingerie,pictures/offlinebyarie.jpg
-GUESS,accessories & jewelries,pictures/guess.jpg
+REPLAY,fashion,pictures/replay.jpg
 & OTHER STORIES,accessories & jewelries,pictures/&otherstories.jpg
 JUST BEEF,food,pictures/justbeef.jpg
 FLYING TIGER COPENHAGEN,home & office,pictures/flyingtigercopenhagen.jpg
@@ -161,3 +160,8 @@ TAMARA,food,pictures/tamara.jpg
 SHILAV,fashion,pictures/shilav.jpg
 EGZ,food,pictures/egz.jpg
 OLAM HAMAMTAKIM,food,pictures/olamhamamtakim.jpg
+TAO TATTOO,cosmetics,pictures/taotattoo.jpg
+BATH & BODY WORKS,cosmetics,pictures/bath&bodyworks.jpg
+YULLIA,cosmetics,pictures/yullia.jpg
+YVES ROCHER,cosmetics,pictures/yvesrocher.jpg
+BLACK & WHITE,shoes,pictures/black&white.jpg
