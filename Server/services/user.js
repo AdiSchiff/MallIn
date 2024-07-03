@@ -1,7 +1,7 @@
 const User = require("../models/user");
 
 const createNewUser = async (username, password, displayName) => {
-  const newUser = new User.user({
+  const newUser = new User({
     username: username,
     password: password,
     displayName: displayName,
@@ -35,8 +35,8 @@ const removeFromFavorites = async (username, store) => {
   try {
     await User.findOneAndUpdate(
       { username: username },
-      { $pull: { favorites: { storeId: store.storeId } } },
-      { new: true }
+      { $pull: { favorites: { storename: store.storename } } },
+      { new: true, useFindAndModify: false }
     );
     return true;
   } catch (error) {

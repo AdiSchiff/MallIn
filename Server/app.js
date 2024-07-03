@@ -31,6 +31,9 @@ app.use('/api/Tokens',login);
 const azrieliStore = require('./routes/azrieli_store')
 app.use('/api/AzrieliStore',azrieliStore);
 
+const navigation = require('./routes/navigation')
+app.use('/api/Navigation',navigation);
+
 const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {

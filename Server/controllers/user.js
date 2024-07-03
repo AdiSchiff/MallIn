@@ -43,7 +43,6 @@ const getUser = async (req, res) => {
 
 const addToFavorites = async (req, res) => {
   try {
-    console.log("in");
     const token = req.headers.authorization.split(" ")[1];
     const modifiedToken = token.substring(1, token.length - 1);
     const decoded = jwt.verify(modifiedToken, key); // Verify the token using your secret key
@@ -72,15 +71,11 @@ const getFavorites = async (req, res) => {
   try {
     const token = req.headers.authorization.split(" ")[1];
     const modifiedToken = token.substring(1, token.length - 1);
-    console.log(token);
-    console.log(modifiedToken);
     if (!(await loginController.isLoggedIn(token))) {
       return res.status(401).send();
     }
     const decoded = jwt.verify(modifiedToken, key); // Verify the token using your secret key
-    console.log(decoded);
     const fav = await userService.getFavorites(decoded.username);
-    console.log(fav.favorites);
     if (!fav) {
       return res.status(404).send();
     }
@@ -93,7 +88,6 @@ const getFavorites = async (req, res) => {
 
 const removeFromFavorites = async (req, res) => {
   try {
-    console.log("Removing from favorites");
     const token = req.headers.authorization.split(" ")[1];
     const modifiedToken = token.substring(1, token.length - 1);
 
@@ -105,8 +99,6 @@ const removeFromFavorites = async (req, res) => {
 
     const username = decoded.username;
     const store = req.body; // Assuming the store details are in the body
-    console.log(username);
-    console.log(store);
 
     const result = await userService.removeFromFavorites(username, store);
 

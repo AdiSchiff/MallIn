@@ -13,6 +13,9 @@ const AzrieliStore = new Schema({
     },
     mallname: {
         type: String
+    },
+    id: {
+        type: String
     }
 });
 

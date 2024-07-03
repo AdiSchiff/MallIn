@@ -132,6 +132,37 @@ const updateFloor = async (req, res) => {
   res.status(401).send();
 };
 
+const getStoresByTypePaged = async (req, res) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    if (!(await loginController.isLoggedIn(token))) {
+      return res.status(401).send("Unauthorized");
+    }
+
+    const storeType = req.params.storeType;
+
+    const page = parseInt(req.query.page) || 0;
+
+    const limit = parseInt(req.query.limit) || 10;
+
+    let stores;
+    if (storeType === "all") {
+      stores = await storeService.getAll();
+    } else {
+      stores = await storeService.getStoresByType(storeType);
+    }
+    if (!stores || stores.length === 0) {
+      return res.status(404).send("No stores found for the given store type.");
+    }
+
+    const pagedStores = stores.slice(page * limit, (page + 1) * limit);
+    return res.status(200).json(pagedStores);
+  } catch (error) {
+    console.error("Error in getStoresByTypePaged function: ", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
 const getStoresByType = async (req, res) => {
   try {
     const token = req.headers.authorization.split(" ")[1];
@@ -220,6 +251,7 @@ const getTypes = async (req, res) => {
 };
 
 module.exports = {
+  getStoresByTypePaged,
   createNewStore,
   getStoresByName,
   getStoresByFloor,
