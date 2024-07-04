@@ -5,7 +5,9 @@ const createNode = async (req, res) => {
     req.body.id,
     req.body.x,
     req.body.y,
-    req.body.edges
+    req.body.edges, 
+    req.body.floor,
+    req.body.name
   );
   if (!newNode) {
     return res.status(500).json({});
@@ -14,7 +16,9 @@ const createNode = async (req, res) => {
     id: newNode.id,
     x: newNode.x,
     y: newNode.y,
-    edges: newNode.edges
+    edges: newNode.edges,
+    floor: newNode.floor,
+    mane: newNode.name
   });
 };
 
@@ -34,7 +38,7 @@ const getRout = async (req, res) => {
         displayName: displayName,
     });
     } catch (error) {
-    alert(error);
+        alert(error);
     }
 };
 
@@ -44,15 +48,19 @@ const getOrderedRout = async (req, res) => {
         if (!(await loginController.isLoggedIn(token))) {
           return res.status(401).send();
         }
-        //find the stores ids
+        //find the current location's store id
         const startNode = await navigationService.getNodesFromStores([req.params.store]);
+        if (!startNode) {
+            return res.status(404).send(null);
+        }
+        //find the stores ids
         const nodes = await navigationService.getNodesFromStores(req.params.stores);
         if (!nodes) {
             return res.status(404).send(null);
         }
 
         //find the path between every two nodes and add it to the full path
-        let fullPath = [];
+        let fullPath = [startNode];
         for (let i = 0; i < nodes.length - 1; i++) {
             if(i == 0){
                 const start = startNode;
@@ -75,9 +83,22 @@ const getOrderedRout = async (req, res) => {
                 fullPath = fullPath.concat(subPath.slice(1));
             }
         }
-        return res.status(200).json(fullPath);
+        let pathResult = []
+        for (let n of fullPath) {
+            // Create a node result object
+            const nodeResult = {
+                id: n.id,
+                x: n.x,
+                y: n.y,
+                floor: n.floor,
+                name: n.name,
+            };
+            // Add the store object to the mall's stores array
+            pathResult.push(nodeResult);
+        }
+        return res.status(200).json(pathResult);
     } catch (error) {
-    alert(error);
+        alert(error);
     }
 };
 

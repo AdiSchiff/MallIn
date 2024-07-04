@@ -16,6 +16,9 @@ const Node = new Schema({
     },
     floor: {
         type: Number,
+    },
+    name: {
+        type: String
     }
 });
 
