@@ -148,7 +148,7 @@
 		</section>
 		<section name="node">
 			<attribute key="id" type="int">37</attribute>
-			<attribute key="label" type="String">Stairs B</attribute>
+			<attribute key="label" type="String">Stairs 3B</attribute>
 			<section name="graphics">
 				<attribute key="x" type="double">1329.8883042992093</attribute>
 				<attribute key="y" type="double">1349.7679384486487</attribute>
@@ -160,7 +160,7 @@
 				<attribute key="outline" type="String">#000000</attribute>
 			</section>
 			<section name="LabelGraphics">
-				<attribute key="text" type="String">Stairs B</attribute>
+				<attribute key="text" type="String">Stairs 3B</attribute>
 				<attribute key="fontSize" type="int">12</attribute>
 				<attribute key="fontName" type="String">Dialog</attribute>
 				<attribute key="anchor" type="String">c</attribute>
@@ -254,6 +254,17 @@
 		<section name="edge">
 			<attribute key="source" type="int">37</attribute>
 			<attribute key="target" type="int">31</attribute>
+			<section name="graphics">
+				<attribute key="fill" type="String">#000000</attribute>
+			</section>
+			<section name="edgeAnchor">
+				<attribute key="xSource" type="double">-0.317891438802053</attribute>
+				<attribute key="ySource" type="double">-0.3178914388020833</attribute>
+			</section>
+		</section>
+				<section name="edge">
+			<attribute key="source" type="int">37</attribute>
+			<attribute key="target" type="int">211</attribute>
 			<section name="graphics">
 				<attribute key="fill" type="String">#000000</attribute>
 			</section>
@@ -401,7 +412,7 @@
 			</section>
 		</section>
 		<section name="edge">
-			<attribute key="source" type="int">211</attribute>
+			<attribute key="source" type="int">3211</attribute>
 			<attribute key="target" type="int">37</attribute>
 			<section name="graphics">
 				<attribute key="fill" type="String">#000000</attribute>
