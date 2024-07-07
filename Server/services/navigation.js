@@ -1,12 +1,14 @@
 const Node = require('../models/node');
 const AztieliStoreService = require("../services/azrieli_store");
 
-const createNode = async (id, x, y, edges) => {
+const createNode = async (id, x, y, edges, floor, name) => {
     const node = new Node({
         "id": id,
         "x": x,
         "y": y,
-        "edges": edges
+        "edges": edges,
+        "floor": floor,
+        "name": name
     });
     return await node.save();
 };
@@ -45,9 +47,7 @@ const getNeighbors = async (nodeId) => {
 };
 
 function heuristic(node, goal) {
-    // Implement your heuristic function (e.g., Manhattan distance)
     return Math.abs(node.x - goal.x) + Math.abs(node.y - goal.y);
-    //לתקן הבדלים בין קומות?
 };
 
 const aStar = async (start, goal) => {
@@ -117,7 +117,12 @@ function reconstructPath(cameFrom, current) {
 }
   
 function distBetween(a, b) {
-    return Math.sqrt(Math.pow((a.x - b.x), 2) + Math.pow((a.y - b.y), 2));
+    let fine = 0;
+    // If the nodes's floors are different add a fine to the distance
+    if(a.floor != b.floor) {
+        fine = 100 * Math.abs(a.floor - b.floor)
+    }
+    return fine + Math.sqrt(Math.pow((a.x - b.x), 2) + Math.pow((a.y - b.y), 2));
 }
   
 module.exports = { createNode, aStar, getNodesFromStores }
