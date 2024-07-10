@@ -13,16 +13,16 @@ const createNode = async (id, x, y, edges, floor, name) => {
     return await node.save();
 };
 
-const getNodesFromStores = async (stores) => {
+const getNodesFromStores = async (stores, mallname) => {
     const nodesId = []
     for (const storeObj of stores) {
       // Check if the store exists in the mall's collection
-      const store = await AztieliStoreService.getStoresByName( storeObj.storename, storeObj.mallname );
-      if (!store) {
+      const store = await AztieliStoreService.getStoresByName( storeObj.storename, mallname );
+      if (!store || store.length === 0) {
         return null;
-      }
+    }
       // Add the store id to the nodes id array
-      nodesId.push(store.id);
+      nodesId.push(store[0].id);
     }
     return await getNodes(nodesId);
 };

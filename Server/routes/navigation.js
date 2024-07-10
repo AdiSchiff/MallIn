@@ -9,6 +9,6 @@ router
   .get(navigationController.getRout);
 router
     .route("/order")
-    .get(navigationController.getOrderedRout);
+    .post(navigationController.createOrderedRout);
 
 module.exports = router;
