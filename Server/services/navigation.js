@@ -13,37 +13,46 @@ const createNode = async (id, x, y, edges, floor, name) => {
     return await node.save();
 };
 
+let graphInstance = null;
+
+function createGraph(nodes) {
+    const graphMap = new Map();
+
+    nodes.forEach(node => {
+        graphMap.set(node.id, node);
+    });
+    return graphMap;
+}
+
+async function getGraphInstance() {
+    if (!graphInstance) {
+        const nodes = await Node.find().lean();
+        graphInstance = createGraph(nodes);
+    }
+    return graphInstance;
+}
+
 const getNodesFromStores = async (stores, mallname) => {
-    const nodesId = []
-    for (const storeObj of stores) {
-      // Check if the store exists in the mall's collection
-      const store = await AztieliStoreService.getStoresByName( storeObj.storename, mallname );
-      if (!store || store.length === 0) {
-        return null;
-    }
-      // Add the store id to the nodes id array
-      nodesId.push(store[0].id);
-    }
-    return await getNodes(nodesId);
-};
-
-const getNodes = async (idList) => {
     const nodes = []
-    for (const id of idList) {
-      //Find the node of the current id
-      const node = await Node.findOne({id: id});
-      if (!node) {
-        return null;
-      }
-      // Add the store id to the nodes array
-      nodes.push(node);
+    for (const storeObj of stores) {
+        // Check if the store exists in the mall's collection
+        const store = await AztieliStoreService.getStoresByName( storeObj.storename, mallname );
+        if (!store || store.length === 0) {
+            return null;
+        }
+        // Add the store node to the nodes array
+        nodes.push(graphInstance.get(store[0].id));
     }
-    return nodes;
+    return nodes
 };
 
-const getNeighbors = async (nodeId) => {
-    const node = await Node.findOne({id: nodeId});
-    return await getNodes(node.edges);
+function getNeighbors(idList) {
+    const neighbors = []
+    for (const id of idList) {
+      // Add the neighbor's node to the neighbors array
+      neighbors.push(graphInstance.get(id));
+    }
+    return neighbors;
 };
 
 function heuristic(node, goal) {
@@ -81,9 +90,9 @@ const aStar = async (start, goal) => {
         // Move current node from openSet to closedSet
         openSet.delete(current);
         closedSet.add(current);
-    
+
         // Process each neighbor
-        getNeighbors(current).forEach(neighbor => {
+        getNeighbors(current.edges).forEach((neighbor) => {
             if (closedSet.has(neighbor)) {
                 return;
             }
@@ -125,4 +134,4 @@ function distBetween(a, b) {
     return fine + Math.sqrt(Math.pow((a.x - b.x), 2) + Math.pow((a.y - b.y), 2));
 }
   
-module.exports = { createNode, aStar, getNodesFromStores }
+module.exports = { createNode, aStar, getNodesFromStores, getGraphInstance }

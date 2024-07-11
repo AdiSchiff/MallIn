@@ -23,6 +23,10 @@ const createNode = async (req, res) => {
   });
 };
 
+async function getGraphInstance() {
+    return await navigationService.getGraphInstance()
+}
+
 const getRout = async (req, res) => {
     try {
         const token = req.headers.authorization.split(" ")[1];
@@ -122,25 +126,29 @@ const createOrderedRout = async (req, res) => {
         if (!startNode) {
             return res.status(404).send(null);
         }
-        console.log("startNode" ,startNode)
         //find the stores ids
-        const nodes = await navigationService.getNodesFromStores(req.body.stores);
+        const nodes = await navigationService.getNodesFromStores(req.body.stores, req.query.mallname);
         if (!nodes) {
             return res.status(404).send(null);
         }
-        console.log("nodes" ,nodes)
         //find the path between every two nodes and add it to the full path
-        let fullPath = [startNode];
-        for (let i = 0; i < nodes.length - 1; i++) {
+        let fullPath = [];
+        for (let i = 0; i < nodes.length; i++) {
             if(i == 0){
-                start = startNode;
+                start = startNode[0];
                 goal = nodes[i];
             } else {
+                if(i == nodes.length-1) {
+                    break
+                }
                 start = nodes[i];
                 goal = nodes[i + 1];
             }
-            const subPath = navigationService.aStar(start, goal);
-            
+
+            const subPath = await navigationService.aStar(start, goal);
+            if (!subPath) {
+                return res.status(404).send(null);
+            }
             if (subPath === null) {
                 return res.status(404).send(null);
             }
@@ -173,6 +181,7 @@ const createOrderedRout = async (req, res) => {
 
 module.exports = {
   createNode,
+  getGraphInstance,
   getRout,
   createOrderedRout,
 };
