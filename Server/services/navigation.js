@@ -1,53 +1,62 @@
 const Node = require('../models/node');
 const AztieliStoreService = require("../services/azrieli_store");
 
-const createNode = async (id, x, y, edges) => {
+const createNode = async (id, x, y, edges, floor, name) => {
     const node = new Node({
         "id": id,
         "x": x,
         "y": y,
-        "edges": edges
+        "edges": edges,
+        "floor": floor,
+        "name": name
     });
     return await node.save();
 };
 
-const getNodesFromStores = async (stores) => {
-    const nodesId = []
-    for (const storeObj of stores) {
-      // Check if the store exists in the mall's collection
-      const store = await AztieliStoreService.getStoresByName( storeObj.storename, storeObj.mallname );
-      if (!store) {
-        return null;
-      }
-      // Add the store id to the nodes id array
-      nodesId.push(store.id);
-    }
-    return await getNodes(nodesId);
-};
+let graphInstance = null;
 
-const getNodes = async (idList) => {
+function createGraph(nodes) {
+    const graphMap = new Map();
+
+    nodes.forEach(node => {
+        graphMap.set(node.id, node);
+    });
+    return graphMap;
+}
+
+async function getGraphInstance() {
+    if (!graphInstance) {
+        const nodes = await Node.find().lean();
+        graphInstance = createGraph(nodes);
+    }
+    return graphInstance;
+}
+
+const getNodesFromStores = async (stores, mallname) => {
     const nodes = []
-    for (const id of idList) {
-      //Find the node of the current id
-      const node = await Node.findOne({id: id});
-      if (!node) {
-        return null;
-      }
-      // Add the store id to the nodes array
-      nodes.push(node);
+    for (const storeObj of stores) {
+        // Check if the store exists in the mall's collection
+        const store = await AztieliStoreService.getStoresByName( storeObj.storename, mallname );
+        if (!store || store.length === 0) {
+            return null;
+        }
+        // Add the store node to the nodes array
+        nodes.push(graphInstance.get(store[0].id));
     }
-    return nodes;
+    return nodes
 };
 
-const getNeighbors = async (nodeId) => {
-    const node = await Node.findOne({id: nodeId});
-    return await getNodes(node.edges);
+function getNeighbors(idList) {
+    const neighbors = []
+    for (const id of idList) {
+      // Add the neighbor's node to the neighbors array
+      neighbors.push(graphInstance.get(id));
+    }
+    return neighbors;
 };
 
 function heuristic(node, goal) {
-    // Implement your heuristic function (e.g., Manhattan distance)
     return Math.abs(node.x - goal.x) + Math.abs(node.y - goal.y);
-    //לתקן הבדלים בין קומות?
 };
 
 const aStar = async (start, goal) => {
@@ -81,9 +90,9 @@ const aStar = async (start, goal) => {
         // Move current node from openSet to closedSet
         openSet.delete(current);
         closedSet.add(current);
-    
+
         // Process each neighbor
-        getNeighbors(current).forEach(neighbor => {
+        getNeighbors(current.edges).forEach((neighbor) => {
             if (closedSet.has(neighbor)) {
                 return;
             }
@@ -117,7 +126,12 @@ function reconstructPath(cameFrom, current) {
 }
   
 function distBetween(a, b) {
-    return Math.sqrt(Math.pow((a.x - b.x), 2) + Math.pow((a.y - b.y), 2));
+    let fine = 0;
+    // If the nodes's floors are different add a fine to the distance
+    if(a.floor != b.floor) {
+        fine = 100 * Math.abs(a.floor - b.floor)
+    }
+    return fine + Math.sqrt(Math.pow((a.x - b.x), 2) + Math.pow((a.y - b.y), 2));
 }
   
-module.exports = { createNode, aStar, getNodesFromStores }
+module.exports = { createNode, aStar, getNodesFromStores, getGraphInstance }
