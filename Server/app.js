@@ -1,7 +1,8 @@
 const express = require('express');
 var app = express();
 const http = require("http");
-const {Server} = require("socket.io");
+const navigationController = require("./controllers/navigation");
+
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: true}));
@@ -36,28 +37,8 @@ app.use('/api/Navigation',navigation);
 
 const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
+
+server.listen(PORT, async () => {
     console.log(`Server is running on port ${PORT}`);
+    await navigationController.getGraphInstance();
 });
-
-// app.listen(process.env.PORT);
-// const server = http.createServer(app)
-const io = new Server(server, {
-    cors: {
-        origin: "http://localhost:3000",
-        methods: ["GET", "POST", "DELETE", "PUT"],
-    },
-});
-
-// io.on("connection", (socket) => {
-//     console.log(`User Connected: ${socket.id}`);
-//     socket.on("newMessage", (id) => {
-//         console.log("server received message " + id)
-//         socket.broadcast.emit('newMessage',id);
-//     });
-// });
-
-// const PORT = process.env.PORT || 5000; // Use the port from environment variable or default to 5000
-// app.listen(PORT, () => {
-//     console.log(`Server is running on port ${PORT}`);
-// });
