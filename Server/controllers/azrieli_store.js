@@ -140,9 +140,8 @@ const getStoresByTypePaged = async (req, res) => {
       }
 
     const storeType = req.params.storeType;
-
+    const mallName = req.query.mallname; 
     const page = parseInt(req.query.page) || 0;
-
     const limit = parseInt(req.query.limit) || 10;
 
     let stores;
@@ -191,7 +190,7 @@ const getStoresByType = async (req, res) => {
     return res.status(401).send("Unauthorized");
   }
   const storeType = req.params.storeType;
-  const mallName = req.query.mallname; // Use req.query.mallname for the query parameter
+  const mallName = req.query.mallname; 
   let stores;
   if (storeType === "all") {
     stores = await storeService.getAll();
