@@ -134,29 +134,51 @@ const updateFloor = async (req, res) => {
 
 const getStoresByTypePaged = async (req, res) => {
   try {
-    const token = req.headers.authorization.split(" ")[1];
-    if (!(await loginController.isLoggedIn(token))) {
-      return res.status(401).send("Unauthorized");
-    }
+      const token = req.headers.authorization.split(" ")[1];
+      if (!(await loginController.isLoggedIn(token))) {
+        return res.status(401).send("Unauthorized");
+      }
 
-    const storeType = req.params.storeType;
+      const storeType = req.params.storeType;
 
-    const page = parseInt(req.query.page) || 0;
+      const page = parseInt(req.query.page) || 0;
 
-    const limit = parseInt(req.query.limit) || 10;
+      const limit = parseInt(req.query.limit) || 10;
 
-    let stores;
-    if (storeType === "all") {
-      stores = await storeService.getAll();
-    } else {
-      stores = await storeService.getStoresByType(storeType);
-    }
-    if (!stores || stores.length === 0) {
-      return res.status(404).send("No stores found for the given store type.");
-    }
+      let stores;
+      if (storeType === "all") {
+        stores = await storeService.getAll();
+      } else {
+        stores = await storeService.getStoresByType(storeType);
+      }
+      if (!stores || stores.length === 0) {
+        return res.status(404).send("No stores found for the given store type.");
+      }
 
-    const pagedStores = stores.slice(page * limit, (page + 1) * limit);
-    return res.status(200).json(pagedStores);
+      const azrieliStores = [];
+      for (const store of stores) {
+        // Check if the current store exists in the mall
+        const mallStores = await AztieliStoreService.getStoresByName(
+          store.storename,
+          mallName
+        );
+        if (!mallStores || mallStores.length === 0) {
+          continue;
+        }
+
+        // Create a store object
+        const checkedStore = {
+          storename: store.storename,
+          workingHours: mallStores[0].workingHours,
+          floor: mallStores[0].floor,
+          logoPic: store.logoPic,
+          storeType: store.storeType,
+        };
+        // Add the store object to the mall's stores array
+        azrieliStores.push(checkedStore);
+      }
+      const pagedStores = azrieliStores.slice(page * limit, (page + 1) * limit);
+      return res.status(200).json(pagedStores);
   } catch (error) {
     console.error("Error in getStoresByTypePaged function: ", error);
     res.status(500).send("Internal Server Error");
