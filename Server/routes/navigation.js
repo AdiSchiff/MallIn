@@ -6,7 +6,9 @@ var router = express.Router();
 router
   .route("/")
   .post(navigationController.createNode)
-  .get(navigationController.getRout);
+router
+  .route("/opt")
+  .post(navigationController.createRout);
 router
     .route("/order")
     .post(navigationController.createOrderedRout);
