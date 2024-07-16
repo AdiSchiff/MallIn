@@ -46,6 +46,17 @@ const getNodesFromStores = async (stores, mallname) => {
     return nodes
 };
 
+function calcPathDistance(path) {
+    let totalDistance = 0;
+    
+    // Loop through each pair of consecutive nodes in the path
+    for (let i = 0; i < path.length - 1; i++) {
+        totalDistance += distBetween(path[i], path[i + 1]);
+    }
+    
+    return totalDistance;
+};
+
 function getNeighbors(idList) {
     const neighbors = []
     for (const id of idList) {
@@ -134,4 +145,4 @@ function distBetween(a, b) {
     return fine + Math.sqrt(Math.pow((a.x - b.x), 2) + Math.pow((a.y - b.y), 2));
 }
   
-module.exports = { createNode, aStar, getNodesFromStores, getGraphInstance }
+module.exports = { createNode, aStar, calcPathDistance, getNodesFromStores, getGraphInstance }
