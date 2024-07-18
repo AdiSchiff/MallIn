@@ -38,15 +38,12 @@ const createRout = async (req, res) => {
         if (!startNode) {
             return res.status(404).send(null);
         }
-        console.log("startNode", startNode)
         const stores = req.query.stores
         //find the stores ids
         const nodes = await navigationService.getNodesFromStores(req.body.stores, req.query.mallname);
         if (!nodes) {
             return res.status(404).send(null);
         }
-        console.log("nodes", nodes)
-
 
         // Initialize full path with the start node
         let fullPath = [startNode[0]];
@@ -75,7 +72,6 @@ const createRout = async (req, res) => {
                 return res.status(404).send(null); // No valid path found
             }
 
-            console.log("shortestPath", shortestPath)
             // Remove the first node of each segment to avoid duplication
             fullPath = fullPath.concat(shortestPath.slice(1));
             unvisitedNodes = unvisitedNodes.filter(node => node !== closestNode);
@@ -147,7 +143,6 @@ const createOrderedRout = async (req, res) => {
                 start = nodes[i];
                 goal = nodes[i + 1];
             }
-
             const subPath = await navigationService.aStar(start, goal);
             if (!subPath) {
                 return res.status(404).send(null);

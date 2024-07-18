@@ -102,7 +102,7 @@ const aStar = async (start, goal) => {
         openSet.delete(current);
         closedSet.add(current);
 
-        // Process each neighbor
+        // Process each neighbor        
         getNeighbors(current.edges).forEach((neighbor) => {
             if (closedSet.has(neighbor)) {
                 return;
