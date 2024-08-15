@@ -33,13 +33,13 @@ const createRout = async (req, res) => {
         if (!(await loginController.isLoggedIn(token))) {
           return res.status(401).send();
         }
-        //find the current location's store id
+        //find the current location's node
         const startNode = await navigationService.getNodesFromStores([req.body.store], req.query.mallname);
         if (!startNode) {
             return res.status(404).send(null);
         }
-        const stores = req.query.stores
-        //find the stores ids
+        const stores = req.body.stores
+        //find the stores nodes
         const nodes = await navigationService.getNodesFromStores(req.body.stores, req.query.mallname);
         if (!nodes) {
             return res.status(404).send(null);
@@ -57,7 +57,7 @@ const createRout = async (req, res) => {
 
             // Find the closest unvisited node
             for (let i = 0; i < unvisitedNodes.length; i++) {
-                const subPath = navigationService.aStar(currentNode, unvisitedNodes[i]);
+                const subPath = await navigationService.aStar(currentNode, unvisitedNodes[i]);
                 if (subPath !== null) {
                     const distance = navigationService.calcPathDistance(subPath)
                     if (distance < shortestDistance) {
@@ -78,6 +78,7 @@ const createRout = async (req, res) => {
             currentNode = closestNode;
         }
 
+        // Create the path result containing the node result object
         let pathResult = fullPath.map(n => ({
             id: n.id,
             x: n.x,
@@ -86,20 +87,23 @@ const createRout = async (req, res) => {
             name: n.name
         }));
 
-        // Sort the stores according to the path
-        const nodeIndexMap = pathResult.reduce((map, node, index) => {
-            map[node.id] = index;
+        // Create a map of the nodes in the path to their indexes
+        let nodeIndexMap = pathResult.reduce((map, node, index) => {
+            if (!(node.name in map)) {  // Check if the id is not already in the map
+                map[node.name] = index;
+            }
             return map;
         }, {});
-
-        const sortedStores = stores
-            .filter(store => nodeIndexMap.hasOwnProperty(store.id))
+        console.log("index", nodeIndexMap)
+        // Sort the stores according to the path
+        let sortedStores = stores
+            .filter(store => nodeIndexMap.hasOwnProperty(store.storename))
             .sort((storeA, storeB) => {
-                const indexA = nodeIndexMap[storeA.id];
-                const indexB = nodeIndexMap[storeB.id];
+                const indexA = nodeIndexMap[storeA.storename];
+                const indexB = nodeIndexMap[storeB.storename];
                 return indexA - indexB;
             });
-
+        console.log("sorted", sortedStores)
         const result = {
             nodes: pathResult,
             stores: sortedStores
@@ -120,12 +124,12 @@ const createOrderedRout = async (req, res) => {
         return res.status(401).send();
         }
 
-        //find the current location's store id
+        //find the current location's node
         const startNode = await navigationService.getNodesFromStores([req.body.store], req.query.mallname);
         if (!startNode) {
             return res.status(404).send(null);
         }
-        //find the stores ids
+        //find the stores nodes
         const nodes = await navigationService.getNodesFromStores(req.body.stores, req.query.mallname);
         if (!nodes) {
             return res.status(404).send(null);
