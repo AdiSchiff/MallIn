@@ -94,7 +94,6 @@ const createRout = async (req, res) => {
             }
             return map;
         }, {});
-        console.log("index", nodeIndexMap)
         // Sort the stores according to the path
         let sortedStores = stores
             .filter(store => nodeIndexMap.hasOwnProperty(store.storename))
@@ -103,7 +102,6 @@ const createRout = async (req, res) => {
                 const indexB = nodeIndexMap[storeB.storename];
                 return indexA - indexB;
             });
-        console.log("sorted", sortedStores)
         const result = {
             nodes: pathResult,
             stores: sortedStores
