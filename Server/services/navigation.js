@@ -140,7 +140,7 @@ function distBetween(a, b) {
     let fine = 0;
     // If the nodes's floors are different add a fine to the distance
     if(a.floor != b.floor) {
-        fine = 100 * Math.abs(a.floor - b.floor)
+        fine = 300 * Math.abs(a.floor - b.floor)
     }
     return fine + Math.sqrt(Math.pow((a.x - b.x), 2) + Math.pow((a.y - b.y), 2));
 }
