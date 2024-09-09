@@ -10,7 +10,10 @@ router
   .route("/opt")
   .post(navigationController.createRout);
 router
-    .route("/order")
-    .post(navigationController.createOrderedRout);
+  .route("/order")
+  .post(navigationController.createOrderedRout);
+router
+  .route("/redirecting")
+  .post(navigationController.createRedirection);
 
 module.exports = router;

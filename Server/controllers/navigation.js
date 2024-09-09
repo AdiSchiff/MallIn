@@ -179,9 +179,75 @@ const createOrderedRout = async (req, res) => {
     return res.status(401).send();
 };
 
+const createRedirection = async (req, res) => {
+    const token = req.headers.authorization.split(" ")[1];
+    if (loginController.isLoggedIn(token) !== -1) {
+
+        if (!(await loginController.isLoggedIn(token))) {
+        return res.status(401).send();
+        }
+
+        //find the current location's node
+        const startNode = req.body.node;
+        if (!startNode) {
+            return res.status(404).send(null);
+        }
+        //find the stores nodes
+        const nodes = await navigationService.getNodesFromStores(req.body.stores, req.query.mallname);
+        if (!nodes) {
+            return res.status(404).send(null);
+        }
+        //find the path between every two nodes and add it to the full path
+        let fullPath = [];
+        for (let i = 0; i < nodes.length; i++) {
+            if(i == 0){
+                start = startNode;
+                goal = nodes[i];
+            } else {
+                if(i == nodes.length-1) {
+                    break
+                }
+                start = nodes[i];
+                goal = nodes[i + 1];
+            }
+            const subPath = await navigationService.aStar(start, goal);
+            if (!subPath) {
+                return res.status(404).send(null);
+            }
+            if (subPath === null) {
+                return res.status(404).send(null);
+            }
+        
+            // If it's the first segment, include all nodes
+            // Otherwise, exclude the first node of each segment to avoid duplication
+            if (i === 0) {
+                fullPath = fullPath.concat(subPath);
+            } else {
+                fullPath = fullPath.concat(subPath.slice(1));
+            }
+        }
+        let pathResult = []
+        for (let n of fullPath) {
+            // Create a node result object
+            const nodeResult = {
+                id: n.id,
+                x: n.x,
+                y: n.y,
+                floor: n.floor,
+                name: n.name,
+            };
+            // Add the store object to the mall's stores array
+            pathResult.push(nodeResult);
+        }
+        return res.status(200).json(pathResult);
+    }
+    return res.status(401).send();
+};
+
 module.exports = {
   createNode,
   getGraphInstance,
   createRout,
   createOrderedRout,
+  createRedirection
 };
