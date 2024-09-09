@@ -188,7 +188,8 @@ const createRedirection = async (req, res) => {
         }
 
         //find the current location's node
-        const startNode = req.body.node;
+       
+        const startNode = await navigationService.getNodeFromId(req.body.node.id);
         if (!startNode) {
             return res.status(404).send(null);
         }

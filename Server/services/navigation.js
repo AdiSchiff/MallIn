@@ -46,6 +46,10 @@ const getNodesFromStores = async (stores, mallname) => {
     return nodes
 };
 
+const getNodeFromId = async (id) => {
+    return graphInstance.get(id)
+};
+
 function calcPathDistance(path) {
     let totalDistance = 0;
     
@@ -145,4 +149,4 @@ function distBetween(a, b) {
     return fine + Math.sqrt(Math.pow((a.x - b.x), 2) + Math.pow((a.y - b.y), 2));
 }
   
-module.exports = { createNode, aStar, calcPathDistance, getNodesFromStores, getGraphInstance }
+module.exports = { createNode, aStar, calcPathDistance, getNodesFromStores, getNodeFromId, getGraphInstance }
